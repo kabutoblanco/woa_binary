@@ -65,7 +65,9 @@ class Solution:
         self.evaluate()
 
     def evaluate(self):
-        self.fitness = self.obj_knapsack.evaluate(self.dimensions)
+        evaluate = self.obj_knapsack.evaluate(self.dimensions)
+        self.fitness = evaluate[0]
+        self.weight = evaluate[1]
         self.obj_algorithm.efos += 1
 
     def __str__(self):

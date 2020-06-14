@@ -1,4 +1,4 @@
-from ..algorithm import Algorithm
+from ...algorithm import Algorithm
 from ...solution import Solution
 
 import random

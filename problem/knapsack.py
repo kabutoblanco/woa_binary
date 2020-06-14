@@ -22,10 +22,11 @@ class Knapsack:
             i += 1
 
     def evaluate(self, dimensions):        
-        sum = 0
+        sum = [0] * 2
         i = 0
         for variable in self.variables:
-            sum += dimensions[i] * variable.value
+            sum[0] += dimensions[i] * variable.value
+            sum[1] += dimensions[i] * variable.weight
             i += 1
         return sum
 

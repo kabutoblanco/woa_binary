@@ -1,4 +1,4 @@
-from ..algorithm import Algorithm
+from ...algorithm import Algorithm
 from .neighborhood import Neighborhood
 from ...solution import Solution
 from ..hillclimbing.hillclimbing_classic import HillclimbingClassic
