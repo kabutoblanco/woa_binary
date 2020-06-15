@@ -1,7 +1,7 @@
 from ..solution import Solution
 
 import copy
-import mpmath
+import mpmath as mp
 import numpy as np
 import random
 
@@ -20,8 +20,8 @@ class WOASolution(Solution):
         #     self.dimensions = list(map(lambda x: int(not x), self.dimensions))
         #     self.evaluate()
         Dist = np.absolute(C * Yb - Yc)
-        c_step = self.sigma(A, Dist)
-        self.dimensions = list(map(lambda x, y: int(not y) if random.random() < x else y, c_step, self.dimensions))
+        c_step = np.absolute(self.tanh(A, Dist))
+        self.dimensions = list(map(lambda x, y: 0 if random.random() < x else 1, c_step, self.dimensions))
         self.evaluate()
 
     def spiral_bubblenet_attacking(self, best_solution, A):
@@ -34,8 +34,8 @@ class WOASolution(Solution):
         #     self.dimensions = list(map(lambda x: int(not x), self.dimensions))
         #     self.evaluate()
         Dist = Yb - Yc
-        c_step = self.sigma(A, Dist)
-        self.dimensions = list(map(lambda x, y: int(not y) if random.random() < x else y, c_step, self.dimensions))
+        c_step = np.absolute(self.tanh(A, Dist))
+        self.dimensions = list(map(lambda x, y: 0 if random.random() < x else 1, c_step, self.dimensions))
         self.evaluate()
 
     def prey_search(self, rand_solution, A, C):
@@ -49,13 +49,20 @@ class WOASolution(Solution):
         #     self.dimensions = list(map(lambda x: int(not x), self.dimensions))
         #     self.evaluate()
         Dist = np.absolute(C * Yr - Yc)
-        c_step = self.sigma(A, Dist)
-        self.dimensions = list(map(lambda x, y: int(not y) if random.random() < x else y, c_step, self.dimensions))
+        c_step = np.absolute(self.tanh(A, Dist))
+        self.dimensions = list(map(lambda x, y: 0 if random.random() < x else 1, c_step, self.dimensions))
         self.evaluate()
 
     def sigma(self, A, Dist):
         # return 1 / (1 + mpmath.exp(-10 * (np.dot(A, Dist) - 0.5)))
-        return list(map(lambda x, y: 1 / (1 + mpmath.exp(-10 * (x * y - 0.5))), A, Dist))
+        return list(map(lambda x, y: 1 / (1 + mp.exp(-10 * (x * y - 0.5))), A, Dist))
+    
+    def arctan(self, A, Dist):
+        # return 1 / (1 + mpmath.exp(-10 * (np.dot(A, Dist) - 0.5)))
+        return list(map(lambda x, y: (2 / mp.math2.pi) * mp.math2.atan((mp.math2.pi / 2) * (x * y)), A, Dist))
+
+    def tanh(self, A, Dist):
+        return list(map(lambda x, y: mp.math2.tanh(x * y), A, Dist))
 
     def tweak(self, pm):
         checks = []
