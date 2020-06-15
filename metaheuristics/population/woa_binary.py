@@ -18,12 +18,17 @@ class WOABinary(Algorithm):
         self.AU = 2
         t = 0        
         factor_decre = 2 / self.MAX_ITER
+
+        self.whales = list(map(lambda x: (WOASolution(obj_knapsack, self)).get_solution(), self.whales))
+
         for i in range(self.population_size):
             s = WOASolution(obj_knapsack, self)
             s.get_solution()
             self.whales[i] = s
+
         self.whales.sort(key = lambda x: x.fitness, reverse = True)
         self.best_solution = self.whales[0]
+        
         while self.efos < self.max_efos and t < self.MAX_ITER and self.best_solution.fitness != obj_knapsack.optimal_know:
             for whale in self.whales:
                 if self.efos > self.max_efos:
@@ -56,8 +61,7 @@ class WOABinary(Algorithm):
                 else:
                     # print("Atacando presa")
                     whale.spiral_bubblenet_attacking(self.best_solution, A)                    
-                if whale.weight > whale.obj_knapsack.capacity:
-                    whale.tweak(0.75)                
+                whale.tweak(0.75)                
 
             self.whales.sort(key = lambda x: x.fitness, reverse = True)
             

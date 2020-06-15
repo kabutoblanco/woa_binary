@@ -14,13 +14,7 @@ class Neighborhood:
             i += 1            
 
     def best_neighbors(self):
-        best = self.neighborhood[0]
-
-        for neighbor in self.neighborhood:
-            if neighbor.fitness > best.fitness:
-                best = neighbor.copy()
-        
-        return best
+        return max(self.neighborhood, key = lambda x: x.fitness).copy()
 
     def __str__(self):
         return str(self.dh)

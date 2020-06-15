@@ -1,4 +1,7 @@
 from ..solution import Solution
+from .transfer.sigma import Sigma
+from .transfer.arctan import Arctan
+from .transfer.tanh import Tanh
 
 import copy
 import mpmath as mp
@@ -8,6 +11,8 @@ import random
 class WOASolution(Solution):
     def __init__(self, obj_knapsack, obj_algorithm):
         super().__init__(obj_knapsack, obj_algorithm)
+        self.tranfer = Sigma()
+        self.b = 1
 
     def encircling_prey(self, best_solution, A, C):
         Yb = np.array(best_solution.dimensions)
@@ -15,27 +20,24 @@ class WOASolution(Solution):
         A = np.array(A)
         C = np.array(C)
         # Dist = np.absolute(C * Yb - Yc)
-        # c_step = self.sigma(A, Dist)
-        # if random.random() < c_step:
-        #     self.dimensions = list(map(lambda x: int(not x), self.dimensions))
-        #     self.evaluate()
+        # x_next = Yb - A * Dist
+        # c_step = np.absolute(self.tranfer.execute(x_next))
         Dist = np.absolute(C * Yb - Yc)
-        c_step = np.absolute(self.tanh(A, Dist))
-        self.dimensions = list(map(lambda x, y: 0 if random.random() < x else 1, c_step, self.dimensions))
+        c_step = np.absolute(self.tranfer.execute(A, Dist))
+        self.dimensions = list(map(lambda x, y: int(not y) if random.random() < x else y, c_step, self.dimensions))
         self.evaluate()
 
     def spiral_bubblenet_attacking(self, best_solution, A):
         Yb = np.array(best_solution.dimensions)
         Yc = np.array(self.dimensions)
         A = np.array(A)
-        # Dist = Yb - Yc
-        # c_step = self.sigma(A, Dist)
-        # if random.random() < c_step:
-        #     self.dimensions = list(map(lambda x: int(not x), self.dimensions))
-        #     self.evaluate()
+        # Dist = np.absolute(Yb - Yc)
+        # l = random.uniform(-1, 1)
+        # x_next = Dist * mp.exp(self.b * l) * mp.cos(2 * mp.pi * l) + Yc
+        # c_step = np.absolute(self.tranfer.execute(x_next))
         Dist = Yb - Yc
-        c_step = np.absolute(self.tanh(A, Dist))
-        self.dimensions = list(map(lambda x, y: 0 if random.random() < x else 1, c_step, self.dimensions))
+        c_step = np.absolute(self.tranfer.execute(A, Dist))
+        self.dimensions = list(map(lambda x, y: int(not y) if random.random() < x else y, c_step, self.dimensions))
         self.evaluate()
 
     def prey_search(self, rand_solution, A, C):
@@ -44,25 +46,12 @@ class WOASolution(Solution):
         A = np.array(A)
         C = np.array(C)
         # Dist = np.absolute(C * Yr - Yc)
-        # c_step = self.sigma(A, Dist)
-        # if random.random() < c_step:
-        #     self.dimensions = list(map(lambda x: int(not x), self.dimensions))
-        #     self.evaluate()
+        # x_next = Yr - A * Dist
+        # c_step = np.absolute(self.tranfer.execute(x_next))
         Dist = np.absolute(C * Yr - Yc)
-        c_step = np.absolute(self.tanh(A, Dist))
-        self.dimensions = list(map(lambda x, y: 0 if random.random() < x else 1, c_step, self.dimensions))
+        c_step = np.absolute(self.tranfer.execute(A, Dist))
+        self.dimensions = list(map(lambda x, y: int(not y) if random.random() < x else y, c_step, self.dimensions))
         self.evaluate()
-
-    def sigma(self, A, Dist):
-        # return 1 / (1 + mpmath.exp(-10 * (np.dot(A, Dist) - 0.5)))
-        return list(map(lambda x, y: 1 / (1 + mp.exp(-10 * (x * y - 0.5))), A, Dist))
-    
-    def arctan(self, A, Dist):
-        # return 1 / (1 + mpmath.exp(-10 * (np.dot(A, Dist) - 0.5)))
-        return list(map(lambda x, y: (2 / mp.math2.pi) * mp.math2.atan((mp.math2.pi / 2) * (x * y)), A, Dist))
-
-    def tanh(self, A, Dist):
-        return list(map(lambda x, y: mp.math2.tanh(x * y), A, Dist))
 
     def tweak(self, pm):
         checks = []

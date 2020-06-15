@@ -18,6 +18,7 @@ class VNS(Algorithm):
 
     def execute(self, obj_knapsack, obj_solution):
         self.reset_values()
+        self.k_max = random.randint(2, int(math.log10(obj_knapsack.total_items) + 2)) if obj_knapsack.total_items < 6 else random.randint(3, int(math.log10(obj_knapsack.total_items) + 3))
 
         for i in range(0, self.k_max):
             neighborhood = Neighborhood(random.uniform(0.49, 0.61), i + 1, random.randint(4, 50))
