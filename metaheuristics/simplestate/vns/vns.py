@@ -17,7 +17,7 @@ class VNS(Algorithm):
         self.neighborhoods = []
 
     def execute(self, obj_knapsack, obj_solution):
-        self.efos = 0
+        self.reset_values()
 
         for i in range(0, self.k_max):
             neighborhood = Neighborhood(random.uniform(0.49, 0.61), i + 1, random.randint(4, 50))

@@ -10,3 +10,8 @@ class Algorithm(ABC):
     @abstractclassmethod
     def execute(self, obj_knapsack, obj_solution):
         raise NotImplementedError
+
+    def reset_values(self):
+        self.efos = 0
+        self.successfull = False
+        self.best_solution = None

@@ -11,7 +11,7 @@ class HillclimbingMaxslope(Algorithm):
         self.neighborhood = 5
 
     def execute(self, obj_knapsack, obj_solution):
-        self.efos = 0
+        self.reset_values()
 
         if not obj_solution:
             s = Solution(obj_knapsack, self)

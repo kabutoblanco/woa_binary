@@ -11,7 +11,7 @@ class HillclimbingClassic(Algorithm):
         self.ratio = 4
 
     def execute(self, obj_knapsack, obj_solution):
-        self.efos = 0
+        self.reset_values()
 
         if not obj_solution:
             s = Solution(obj_knapsack, self)

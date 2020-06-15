@@ -9,7 +9,7 @@ class RandomSearch(Algorithm):
         Algorithm.__init__(self)
 
     def execute(self, obj_knapsack, obj_solution):
-        self.efos = 0
+        self.reset_values()
         self.best_solution = Solution(obj_knapsack, self)
         self.best_solution.get_solution()
 

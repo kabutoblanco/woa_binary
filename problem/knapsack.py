@@ -22,13 +22,10 @@ class Knapsack:
             i += 1
 
     def evaluate(self, dimensions):        
-        sum = [0] * 2
-        i = 0
-        for variable in self.variables:
-            sum[0] += dimensions[i] * variable.value
-            sum[1] += dimensions[i] * variable.weight
-            i += 1
-        return sum
+        values = [0] * 2
+        values[0] = sum(list(map(lambda x, y: x * y.value,  dimensions, self.variables)))
+        values[1] = sum(list(map(lambda x, y: x * y.weight, dimensions, self.variables)))
+        return values
 
     def get_weight(self, index):
         return self.variables[index].weight

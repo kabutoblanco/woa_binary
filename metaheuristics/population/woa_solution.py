@@ -1,7 +1,7 @@
 from ..solution import Solution
 
 import copy
-import math
+import mpmath
 import numpy as np
 import random
 
@@ -10,43 +10,55 @@ class WOASolution(Solution):
         super().__init__(obj_knapsack, obj_algorithm)
 
     def encircling_prey(self, best_solution, A, C):
-        A = np.array(A)
-        C = np.array(C)
         Yb = np.array(best_solution.dimensions)
         Yc = np.array(self.dimensions)
-        Dist = np.absolute((C * Yb) - Yc)
-        c_step = 1 / (1 + np.exp(-10 * (np.dot(A, Dist) - 0.5)))
-        if random.random() < c_step:
-            for i in range(len(self.dimensions)):
-                self.dimensions[i] = int(not self.dimensions[i])
-            self.evaluate()
+        A = np.array(A)
+        C = np.array(C)
+        # Dist = np.absolute(C * Yb - Yc)
+        # c_step = self.sigma(A, Dist)
+        # if random.random() < c_step:
+        #     self.dimensions = list(map(lambda x: int(not x), self.dimensions))
+        #     self.evaluate()
+        Dist = np.absolute(C * Yb - Yc)
+        c_step = self.sigma(A, Dist)
+        self.dimensions = list(map(lambda x, y: int(not y) if random.random() < x else y, c_step, self.dimensions))
+        self.evaluate()
 
     def spiral_bubblenet_attacking(self, best_solution, A):
-        A = np.array(A)
         Yb = np.array(best_solution.dimensions)
         Yc = np.array(self.dimensions)
+        A = np.array(A)
+        # Dist = Yb - Yc
+        # c_step = self.sigma(A, Dist)
+        # if random.random() < c_step:
+        #     self.dimensions = list(map(lambda x: int(not x), self.dimensions))
+        #     self.evaluate()
         Dist = Yb - Yc
-        c_step = 1 / (1 + np.exp(-10 * (np.dot(A, Dist) - 0.5)))       
-        if random.random() < c_step:
-            for i in range(len(self.dimensions)):
-                self.dimensions[i] = int(not self.dimensions[i])
-            self.evaluate()
+        c_step = self.sigma(A, Dist)
+        self.dimensions = list(map(lambda x, y: int(not y) if random.random() < x else y, c_step, self.dimensions))
+        self.evaluate()
 
     def prey_search(self, rand_solution, A, C):
+        Yr = np.array(rand_solution.dimensions)
+        Yc = np.array(self.dimensions)
         A = np.array(A)
         C = np.array(C)
-        Yb = np.array(rand_solution.dimensions)
-        Yc = np.array(self.dimensions)
-        Dist = np.absolute((C * Yb) - Yc)
-        c_step = 1 / (1 + np.exp(-10 * (np.dot(A, Dist) - 0.5)))        
-        if random.random() < c_step:
-            for i in range(len(self.dimensions)):
-                self.dimensions[i] = int(not self.dimensions[i])
-            self.evaluate()
+        # Dist = np.absolute(C * Yr - Yc)
+        # c_step = self.sigma(A, Dist)
+        # if random.random() < c_step:
+        #     self.dimensions = list(map(lambda x: int(not x), self.dimensions))
+        #     self.evaluate()
+        Dist = np.absolute(C * Yr - Yc)
+        c_step = self.sigma(A, Dist)
+        self.dimensions = list(map(lambda x, y: int(not y) if random.random() < x else y, c_step, self.dimensions))
+        self.evaluate()
+
+    def sigma(self, A, Dist):
+        # return 1 / (1 + mpmath.exp(-10 * (np.dot(A, Dist) - 0.5)))
+        return list(map(lambda x, y: 1 / (1 + mpmath.exp(-10 * (x * y - 0.5))), A, Dist))
 
     def tweak(self, pm):
         checks = []
-
         while self.weight > self.obj_knapsack.capacity:
             if random.random() < pm:
                 index = random.randint(0, len(self.dimensions) - 1)
@@ -56,7 +68,6 @@ class WOASolution(Solution):
                     self.weight -= self.obj_knapsack.get_weight(index)
         
         checks = []
-
         while self.weight < self.obj_knapsack.capacity:
             if random.random() < pm:
                 index = random.randint(0, len(self.dimensions) - 1)

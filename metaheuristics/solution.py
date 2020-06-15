@@ -70,5 +70,8 @@ class Solution:
         self.weight = evaluate[1]
         self.obj_algorithm.efos += 1
 
+    def reset_values(self):
+        pass
+
     def __str__(self):
         return self.dimensions.__str__()
