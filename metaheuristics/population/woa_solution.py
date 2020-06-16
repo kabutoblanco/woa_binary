@@ -19,25 +19,25 @@ class WOASolution(Solution):
         Yc = np.array(self.dimensions)
         A = np.array(A)
         C = np.array(C)
-        # Dist = np.absolute(C * Yb - Yc)
-        # x_next = Yb - A * Dist
-        # c_step = np.absolute(self.tranfer.execute(x_next))
         Dist = np.absolute(C * Yb - Yc)
-        c_step = np.absolute(self.tranfer.execute(A, Dist))
-        self.dimensions = list(map(lambda x, y: int(not y) if random.random() < x else y, c_step, self.dimensions))
+        x_next = Yb - A * Dist
+        c_step = np.absolute(self.tranfer.execute(x_next))
+        # Dist = np.absolute(C * Yb - Yc)
+        # c_step = np.absolute(self.tranfer.execute(A, Dist))
+        self.dimensions = list(map(lambda x, y: 1 if random.random() < x else 0, c_step, self.dimensions))
         self.evaluate()
 
     def spiral_bubblenet_attacking(self, best_solution, A):
         Yb = np.array(best_solution.dimensions)
         Yc = np.array(self.dimensions)
-        A = np.array(A)
-        # Dist = np.absolute(Yb - Yc)
-        # l = random.uniform(-1, 1)
-        # x_next = Dist * mp.exp(self.b * l) * mp.cos(2 * mp.pi * l) + Yc
-        # c_step = np.absolute(self.tranfer.execute(x_next))
-        Dist = Yb - Yc
-        c_step = np.absolute(self.tranfer.execute(A, Dist))
-        self.dimensions = list(map(lambda x, y: int(not y) if random.random() < x else y, c_step, self.dimensions))
+        A = np.array(A)        
+        Dist = np.absolute(Yb - Yc)
+        l = random.uniform(-1, 1)
+        x_next = Dist * mp.exp(self.b * l) * mp.cos(2 * mp.pi * l) + Yc
+        c_step = np.absolute(self.tranfer.execute(x_next))
+        # Dist = Yb - Yc
+        # c_step = np.absolute(self.tranfer.execute(A, Dist))
+        self.dimensions = list(map(lambda x, y: 1 if random.random() < x else 0, c_step, self.dimensions))
         self.evaluate()
 
     def prey_search(self, rand_solution, A, C):
@@ -45,12 +45,12 @@ class WOASolution(Solution):
         Yc = np.array(self.dimensions)
         A = np.array(A)
         C = np.array(C)
-        # Dist = np.absolute(C * Yr - Yc)
-        # x_next = Yr - A * Dist
-        # c_step = np.absolute(self.tranfer.execute(x_next))
         Dist = np.absolute(C * Yr - Yc)
-        c_step = np.absolute(self.tranfer.execute(A, Dist))
-        self.dimensions = list(map(lambda x, y: int(not y) if random.random() < x else y, c_step, self.dimensions))
+        x_next = Yr - A * Dist
+        c_step = np.absolute(self.tranfer.execute(x_next))
+        # Dist = np.absolute(C * Yr - Yc)
+        # c_step = np.absolute(self.tranfer.execute(A, Dist))
+        self.dimensions = list(map(lambda x, y: 1 if random.random() < x else 0, c_step, self.dimensions))
         self.evaluate()
 
     def tweak(self, pm):

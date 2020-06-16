@@ -11,6 +11,12 @@ class WOABinary(Algorithm):
         self.whales = [None] * population_size
         self.MAX_ITER = 0
         self.AU = 0
+
+    def verify(self, x):
+        if x > 1:
+            return True
+        else:
+            return False
         
     def execute(self, obj_knapsack, value):
         self.reset_values()
@@ -48,9 +54,8 @@ class WOABinary(Algorithm):
                 C = list(map(lambda x: 2 * x, r2))
 
                 if random.random() < 0.5:
-                    A_np = np.array(A)
-                    A_module = np.linalg.norm(A_np)
-                    if A_module < 1:
+                    flag = False if len(list(filter(self.verify, np.absolute(np.array(A))))) > 0 else True
+                    if flag:
                         # print("Asechando presa")
                         whale.encircling_prey(self.best_solution, A, C)
                     else:

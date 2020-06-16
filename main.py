@@ -14,11 +14,11 @@ import random
 from time import time
 
 def main():
-    MAX_EFOS = 5000
+    MAX_EFOS = 1000
     ITER_MAX = 30
     list_statistics = []
     e = Export(list_statistics)
-    for i in range(1, 9):      
+    for i in range(1, 14):      
         name_file = ""
         if i < 11:
             name_file = "./data/files/f{}.txt".format(i)
