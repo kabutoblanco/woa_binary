@@ -6,8 +6,8 @@ class Sigma(Function):
     def __init__(self):
         pass
 
-    def execute(self, A, Dist):
-        return list(map(lambda x, y: 1 / (1 + mp.exp(-10 * (x * y - 0.5))), A, Dist))
-
     def execute(self, x_next):
-        return list(map(lambda x: 1 / (1 + mp.exp(-10 * (x - 0.5))), x_next))
+        return list(map(lambda x: 1 / (1 + mp.exp(-x / 3)), x_next))
+
+    def __str__(self):
+        return "sigma"

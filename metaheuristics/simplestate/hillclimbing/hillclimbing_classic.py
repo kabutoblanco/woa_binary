@@ -1,8 +1,8 @@
-from ...algorithm import Algorithm
+from ...algorithm import Algorithm, tm
 from ...solution import Solution
+
 import copy
 import random
-
 
 class HillclimbingClassic(Algorithm):
     def __init__(self):
@@ -18,15 +18,17 @@ class HillclimbingClassic(Algorithm):
             s.get_solution()
         else:
             s = obj_solution.copy()
+        
+        tm_s = tm()
 
-        while self.efos < self.max_efos and s.fitness != obj_knapsack.optimal_know:
+        while self.efos < self.max_efos and not s.is_optimalknow() and tm() - tm_s < self.max_time:
             r = s.copy()
             r.tweak(self.pm, self.ratio)
         
             if r.fitness > s.fitness:
                 s = r
 
-            if s.fitness == obj_knapsack.optimal_know:
+            if s.is_optimalknow():
                 self.successfull = True
         
         self.best_solution = s

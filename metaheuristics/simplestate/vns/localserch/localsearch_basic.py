@@ -16,7 +16,7 @@ class LocalsearchBasic(Localsearch):
         s_prima = obj_neighborhood.neighborhood[rand_index]
         
         # Búsqueda local
-        if s.obj_algorithm.max_efos - s.obj_algorithm.efos <= self.algorithm.max_efos:
+        if s.obj_algorithm.max_efos - s.obj_algorithm.efos < self.algorithm.max_efos:
             self.algorithm.max_efos = s.obj_algorithm.max_efos - s.obj_algorithm.efos
 
         self.algorithm.ratio = obj_neighborhood.dh

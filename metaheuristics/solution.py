@@ -53,10 +53,10 @@ class Solution:
                         if self.weight > self.obj_knapsack.capacity:
                             self.dimensions[index] = 0
                             self.weight -= self.obj_knapsack.get_weight(index)                            
-                            checks.remove(index)
+                            checks.remove(index)                            
                         if weight == self.obj_knapsack.capacity:
                             break
-                        if weight > self.obj_knapsack.capacity and 1 not in dimensions:
+                        if weight > self.obj_knapsack.capacity and 1 not in dimensions:                            
                             break                        
                     else:
                         self.weight -= self.obj_knapsack.get_weight(index)
@@ -69,6 +69,9 @@ class Solution:
         self.fitness = evaluate[0]
         self.weight = evaluate[1]
         self.obj_algorithm.efos += 1
+
+    def is_optimalknow(self):
+        return abs(self.fitness - self.obj_knapsack.optimal_know) < 1e-7
 
     def reset_values(self):
         pass

@@ -1,5 +1,9 @@
-from ..algorithm import Algorithm
+from ..algorithm import Algorithm, tm
 from .woa_solution import WOASolution
+from .transfer.sigma import Sigma
+from .transfer.arctan import Arctan
+from .transfer.tanh import Tanh
+
 import random
 import numpy as np
 import math
@@ -11,51 +15,50 @@ class WOABinary(Algorithm):
         self.whales = [None] * population_size
         self.MAX_ITER = 0
         self.AU = 0
+        self.transfer = Arctan()
 
-    def verify(self, x):
-        if x > 1:
-            return True
-        else:
-            return False
+    def init_whale(self, x):
+        s = WOASolution(x, self)
+        s.get_solution()
+        return s
         
     def execute(self, obj_knapsack, value):
-        self.reset_values()
-        self.MAX_ITER = 500
+        self.reset_values()        
         self.AU = 2
+
+        self.population_size = 30
+        self.MAX_ITER = (self.max_efos - self.population_size) / (self.population_size + 8.7999999999)
+
         t = 0        
         factor_decre = 2 / self.MAX_ITER
 
-        self.whales = list(map(lambda x: (WOASolution(obj_knapsack, self)).get_solution(), self.whales))
+        self.whales = list(map(lambda x: self.init_whale(obj_knapsack), range(self.population_size)))
+        self.best_solution = max(self.whales, key = lambda x: x.fitness).copy()
 
-        for i in range(self.population_size):
-            s = WOASolution(obj_knapsack, self)
-            s.get_solution()
-            self.whales[i] = s
-
-        self.whales.sort(key = lambda x: x.fitness, reverse = True)
-        self.best_solution = self.whales[0]
+        tm_s = tm()
         
-        while self.efos < self.max_efos and t < self.MAX_ITER and self.best_solution.fitness != obj_knapsack.optimal_know:
+        while self.efos < self.max_efos and t < self.MAX_ITER and not self.best_solution.is_optimalknow() and tm() - tm_s < self.max_time:
             for whale in self.whales:
-                if self.efos > self.max_efos:
+                if self.efos >= self.max_efos or tm() - tm_s >= self.max_time:
                     break
-                au = [0] * obj_knapsack.total_items
-                r1 = [0] * obj_knapsack.total_items
-                r2 = [0] * obj_knapsack.total_items
 
-                A = [0] * obj_knapsack.total_items
-                C = [0] * obj_knapsack.total_items
+                A = []
+                C = []
 
-                au = list(map(lambda x: random.uniform(-self.AU, self.AU), au))
-                r1 = list(map(lambda x: random.random(), r1))
-                r2 = list(map(lambda x: random.random(), r2))
+                abs_A = 0
 
-                A = list(map(lambda x, y: 2 * x * y - x, au, r1))
-                C = list(map(lambda x: 2 * x, r2))
+                for i in range(obj_knapsack.total_items):
+                    au = random.uniform(-self.AU, self.AU)
+                    Ai = 2 * au * random.random() - au
+                    A.append(Ai)
+                    C.append(2 * random.random())
+                    if Ai >= 1:
+                        abs_A = 1
+                
+                p = random.random()
 
-                if random.random() < 0.5:
-                    flag = False if len(list(filter(self.verify, np.absolute(np.array(A))))) > 0 else True
-                    if flag:
+                if p < 0.5:
+                    if not abs_A:
                         # print("Asechando presa")
                         whale.encircling_prey(self.best_solution, A, C)
                     else:
@@ -65,19 +68,30 @@ class WOABinary(Algorithm):
                         whale.prey_search(whale_rand, A, C)
                 else:
                     # print("Atacando presa")
-                    whale.spiral_bubblenet_attacking(self.best_solution, A)                    
-                whale.tweak(0.75)                
+                    whale.spiral_bubblenet_attacking(self.best_solution, A)  
+                whale.tweak(0.61)   
+                if whale.is_optimalknow():
+                    self.best_solution = whale
+                    break
+                if self.efos >= self.max_efos or tm() - tm_s >= self.max_time:
+                    break                        
 
-            self.whales.sort(key = lambda x: x.fitness, reverse = True)
+            best_solution = max(self.whales, key = lambda x: x.fitness).copy()
             
-            if self.whales[0].fitness > self.best_solution.fitness:
-                self.best_solution = self.whales[0].copy()
+            if best_solution.fitness > self.best_solution.fitness:
+                self.best_solution = best_solution.copy()
+
+            self.best_solution.local_optimizer()
 
             self.AU -= factor_decre
-            t += 1                          
+            t += 1  
+            # print(self.AU)        
 
-        if self.best_solution.fitness == obj_knapsack.optimal_know:
+            if self.best_solution.is_optimalknow():
+                break
+
+        if self.best_solution.is_optimalknow():
             self.successfull = True        
 
     def __str__(self):
-        return "BWOA"
+        return "BWOA " + self.transfer.__str__()

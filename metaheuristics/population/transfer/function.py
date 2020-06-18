@@ -4,10 +4,6 @@ class Function(ABC):
     def __init__(self):
         pass
 
-    # @abstractclassmethod
-    # def execute(self, A, Dist):
-    #     raise NotImplementedError
-
     @abstractclassmethod
     def execute(self, x_next):
         raise NotImplementedError

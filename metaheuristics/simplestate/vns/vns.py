@@ -1,4 +1,4 @@
-from ...algorithm import Algorithm
+from ...algorithm import Algorithm, tm
 from .neighborhood import Neighborhood
 from ...solution import Solution
 from ..hillclimbing.hillclimbing_classic import HillclimbingClassic
@@ -26,9 +26,12 @@ class VNS(Algorithm):
 
         s = Solution(obj_knapsack, self)
         s.get_solution()
-        while self.efos < self.max_efos and s.fitness != obj_knapsack.optimal_know: 
+
+        tm_s = tm()
+
+        while self.efos < self.max_efos and not s.is_optimalknow() and tm() - tm_s < self.max_time: 
             k = 0
-            while k < self.k_max and self.efos < self.max_efos:
+            while k < self.k_max and self.efos < self.max_efos and tm() - tm_s < self.max_time:
                 obj_searchlocal = LocalsearchBasic(s, HillclimbingMaxslope())
                 s_prima = obj_searchlocal.execute(self.neighborhoods[k])
                 
@@ -38,7 +41,7 @@ class VNS(Algorithm):
                 else:
                     k += 1
 
-                if s.fitness == obj_knapsack.optimal_know:
+                if s.is_optimalknow():
                     self.successfull = True
                     break
             

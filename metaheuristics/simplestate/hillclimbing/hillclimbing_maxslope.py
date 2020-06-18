@@ -1,4 +1,4 @@
-from ...algorithm import Algorithm
+from ...algorithm import Algorithm, tm
 from ...solution import Solution
 
 import random
@@ -19,7 +19,9 @@ class HillclimbingMaxslope(Algorithm):
         else:
             s = obj_solution.copy()
 
-        while self.efos < self.max_efos and s.fitness != obj_knapsack.optimal_know:
+        tm_s = tm()
+
+        while self.efos < self.max_efos and not s.is_optimalknow() and tm() - tm_s < self.max_time:
             r = s.copy()
             r.tweak(self.pm, self.ratio)
 
@@ -29,7 +31,7 @@ class HillclimbingMaxslope(Algorithm):
 
                 if w.fitness > r.fitness:
                     r = w
-                if self.efos >= self.max_efos and s.fitness != obj_knapsack.optimal_know:
+                if self.efos >= self.max_efos or s.is_optimalknow() or tm() - tm_s >= self.max_time:
                     break
 
             if r.fitness > s.fitness:
